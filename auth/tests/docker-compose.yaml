@@ -1,0 +1,56 @@
+version: "3"
+services:
+  tests:
+    build: .
+    env_file:
+      - .test.env
+    depends_on:
+      auth-test:
+        condition: service_healthy
+    networks:
+      - test-network
+
+  auth-test:
+    build: ../src
+    healthcheck:
+      test: curl -f 127.0.0.1/health || exit 1
+      interval: 3s
+      timeout: 30s
+    restart: always
+    command: >
+      sh -c "alembic -c /opt/app/alembic.ini upgrade head && gunicorn auth_app.main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:80 "
+    env_file:
+      - .test.env
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_started
+    ports:
+      - "8000:80"
+    networks:
+      - test-network
+
+  redis:
+    image: redis:latest
+    healthcheck:
+      test: redis-cli ping || exit 1
+      interval: 3s
+      timeout: 30s
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - test-network
+
+  postgres:
+    image: postgres:13-alpine
+    env_file:
+      - .test.env
+    ports:
+      - "5432:5432"
+    networks:
+      - test-network
+
+networks:
+  test-network:

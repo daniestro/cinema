@@ -1,0 +1,68 @@
+[tool.poetry]
+name = "auth-service"
+version = "0.1.0"
+description = ""
+authors = ["likeinlife <likeinlife@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.108.0"
+fastapi-limiter = "0.1.5"
+sqlmodel = "^0.0.14"
+alembic = "1.12.0"
+pydantic = {extras = ["email"], version = "^2.5.3"}
+asyncpg = "0.28.0"
+psycopg2-binary = "2.9.9"
+passlib = "1.7.4"
+pyjwt = {version = "2.8.0", extras = ["crypto"]}
+httpx = {version = "0.25.1", extras = ["http2"]}
+orjson = "3.8.7"
+aenum = "3.1.15"
+redis = "4.4.4"
+python-dotenv = "1.0"
+typer = "0.9.0"
+gunicorn = "21.2.0"
+uvicorn = "0.12.2"
+httptools = "0.6.0"
+uvloop = "0.17.0"
+opentelemetry-api = "1.17.0"
+opentelemetry-sdk = "1.17.0"
+opentelemetry-instrumentation-fastapi = "0.38b0"
+opentelemetry-exporter-jaeger = "1.17.0"
+pydantic-settings = "^2.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.8.0"
+ruff = "^0.1.10"
+isort = "^5.13.2"
+pre-commit = "^3.6.0"
+
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+plugins = [
+  "pydantic.mypy"
+]
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 120
+select = ["D", "B", "S", "A", "COM", "C4", "T10", "F"]
+ignore = ["D100", "D107", "D101", "D106", "D103", "D213", "D211", "D104", "D102", "B008", "B904", "A003"]
+exclude = ["__init__.py", "migrations"]
+
+[tool.ruff.per-file-ignores]
+"tests/*" = ["S"]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]
