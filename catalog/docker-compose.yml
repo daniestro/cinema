@@ -1,0 +1,85 @@
+version: '3.9'
+
+x-app: &app
+  env_file:
+    - .env
+
+services:
+
+  api:
+    build: .
+    container_name: movies-api
+    <<: *app
+    environment:
+      PROJECT_ROOT_URL: /content
+    expose:
+      - 8000
+    secrets:
+      - rsa_public
+    networks:
+      - etl_network
+      - jaeger_net
+      - cinema_net
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+          cpus: '0.5'
+
+  redis:
+    image: redis:7.0.10
+    container_name: movies-redis
+    # Cache-mode Redis: LRU eviction at 80mb, no persistence (data is rebuildable from ES).
+    command:
+      - redis-server
+      - --maxmemory
+      - 80mb
+      - --maxmemory-policy
+      - allkeys-lru
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      timeout: 30s
+      retries: 10
+      start_period: 30s
+    expose:
+      - 6379
+    restart: unless-stopped
+    networks:
+      - etl_network
+    deploy:
+      resources:
+        limits:
+          memory: 96M
+          cpus: '0.2'
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - 16686:16686
+      - 6831:6831/udp
+      - 6832:6832/udp
+      - 5778:5778
+    networks:
+      - jaeger_net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+
+
+networks:
+  jaeger_net:
+  etl_network:
+    external: true
+  cinema_net:
+    external: true
+
+secrets:
+  rsa_public:
+    file: ../auth/keys/rsa.pub

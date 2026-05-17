@@ -1,0 +1,50 @@
+version: '3.9'
+
+x-app: &app
+  env_file:
+    - ../../.env
+  restart: always
+
+services:
+  tests:
+    build: .
+    container_name: movies-tests
+    <<: *app
+    entrypoint: sh -c "
+      python3 -u utils/wait_for_es.py &&
+      python3 -u utils/wait_for_redis.py &&
+      pytest --setup-show src -s"
+    networks:
+      - etl_network
+    restart: "no"
+
+  test-redis:
+    image: redis:7.0.10
+    container_name: movies-test-redis
+    <<: *app
+    volumes:
+      - ../../redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+    networks:
+      - etl_network
+
+  test-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    container_name: movies-test-elastic
+    <<: *app
+    deploy:
+      resources:
+        limits:
+          memory: 1GB
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - 9200:9200
+    networks:
+      - etl_network
+
+networks:
+  etl_network:
+    external: true
