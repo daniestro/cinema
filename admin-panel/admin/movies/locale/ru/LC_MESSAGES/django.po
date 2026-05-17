@@ -1,0 +1,99 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-03-20 17:26+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: .\movies\models.py:18
+msgid "created"
+msgstr "Дата создания"
+
+#: .\movies\models.py:25
+msgid "modified"
+msgstr "Дата изменения"
+
+#: .\movies\models.py:37
+msgid "name"
+msgstr "Название"
+
+#: .\movies\models.py:38 .\movies\models.py:62
+msgid "description"
+msgstr "Описание"
+
+#: .\movies\models.py:42
+msgid "Genre"
+msgstr "Жанр"
+
+#: .\movies\models.py:43
+msgid "Genres"
+msgstr "Жанры"
+
+#: .\movies\models.py:47
+msgid "full_name"
+msgstr "Имя Фамилия"
+
+#: .\movies\models.py:51
+msgid "Person"
+msgstr "Человека"
+
+#: .\movies\models.py:52
+msgid "Persons"
+msgstr "Люди"
+
+#: .\movies\models.py:58 .\movies\models.py:77
+msgid "Movie"
+msgstr "Фильм"
+
+#: .\movies\models.py:59
+msgid "TV Show"
+msgstr "ТВ Шоу"
+
+#: .\movies\models.py:61
+msgid "title"
+msgstr "Название"
+
+#: .\movies\models.py:63
+msgid "creation date"
+msgstr "Дата создания"
+
+#: .\movies\models.py:64
+msgid "rating"
+msgstr "Рейтинг"
+
+#: .\movies\models.py:68
+msgid "type"
+msgstr "Тип"
+
+#: .\movies\models.py:71
+msgid "file path"
+msgstr "Путь к файлу"
+
+#: .\movies\models.py:78
+msgid "Movies"
+msgstr "Фильмы"
+
+#: .\movies\models.py:92
+msgid "role"
+msgstr "Роль"
+
+#~ msgid "movie"
+#~ msgstr "фильм"
+
+#~ msgid "tv_show"
+#~ msgstr "Шоу"

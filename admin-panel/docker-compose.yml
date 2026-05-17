@@ -1,0 +1,105 @@
+version: '3.9'
+
+x-app: &app
+  env_file:
+    - ./.env
+  restart: always
+
+services:
+  etl:
+    build: etl
+    container_name: etl
+    <<: *app
+    expose:
+      - "8000"
+    depends_on:
+      elasticsearch:
+        condition: service_started
+      postgres:
+        condition: service_started
+    networks:
+      - movies_network
+    deploy:
+      resources:
+        limits:
+          memory: 192M
+          cpus: '0.3'
+
+  admin:
+    build: admin
+    container_name: movies-admin
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      SECRET_KEY: django-insecure-dev-key
+    volumes:
+      - movies_static_volume:/opt/admin/static
+      - movies_media_volume:/opt/admin/media
+    depends_on:
+      postgres:
+        condition: service_started
+    expose:
+      - "8000"
+    networks:
+      - movies_network
+      - cinema_net
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: elastic
+    volumes:
+      - ~/elasticsearch/data:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=${DISCOVERY_TYPE}
+      - xpack.security.enabled=${XPACK_SECURITY_ENABLED}
+      - "ES_JAVA_OPTS=-Xms256m -Xmx384m"
+    ports:
+      - ${ES_PORT}:${ES_PORT}
+    networks:
+      - movies_network
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+          cpus: '1.0'
+
+  postgres:
+      image: postgres:13
+      container_name: postgres-etl
+      <<: *app
+      volumes:
+        - ~/postgresql/data:/var/lib/postgresql/data
+        - ./etl/utils/dump.sql:/docker-entrypoint-initdb.d/init.sql
+      environment:
+        - POSTGRES_PASSWORD=${DB_PASSWORD}
+        - POSTGRES_USER=${DB_USER}
+        - POSTGRES_DB=${DB_NAME}
+      ports:
+        - "5433:5432"
+      networks:
+        - movies_network
+      deploy:
+        resources:
+          limits:
+            memory: 256M
+            cpus: '0.5'
+
+networks:
+  movies_network:
+    name: etl_network
+    driver: bridge
+  cinema_net:
+    external: true
+
+volumes:
+  movies_static_volume:
+    name: movies_static_volume
+  movies_media_volume:
+    name: movies_media_volume
