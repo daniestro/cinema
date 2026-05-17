@@ -1,0 +1,50 @@
+version: "3"
+
+name: cinema-gateway
+
+# Единая точка входа для всего кинотеатра.
+# Маршрутизирует /auth/ /notify/ /admin/ /static/ /media/ /content/ /ugc/ /ugc-events/ /billing/
+# напрямую на API-контейнеры через внешнюю сеть `cinema_net`.
+# Django static/media читает из named volumes стенда notifications (mount external).
+#
+# Bring-up: после поднятия любых нужных стеков `cd gateway && docker compose up -d`.
+# Если стенд не запущен — gateway вернёт 502 по соответствующему префиксу.
+
+services:
+  gateway:
+    image: nginx:stable-alpine
+    container_name: cinema-gateway
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - notifications_static:/opt/admin/notifications/static:ro
+      - notifications_media:/opt/admin/notifications/media:ro
+      - movies_static:/opt/admin/movies/static:ro
+      - movies_media:/opt/admin/movies/media:ro
+    ports:
+      - "80:80"
+    networks:
+      - cinema_net
+    deploy:
+      resources:
+        limits:
+          memory: 32M
+          cpus: '0.2'
+
+volumes:
+  notifications_static:
+    external: true
+    name: notifications_static_volume
+  notifications_media:
+    external: true
+    name: notifications_media_volume
+  movies_static:
+    external: true
+    name: movies_static_volume
+  movies_media:
+    external: true
+    name: movies_media_volume
+
+networks:
+  cinema_net:
+    external: true
