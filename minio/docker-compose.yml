@@ -33,6 +33,28 @@ services:
           memory: 512M
           cpus: '0.5'
 
+  provision:
+    image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+    container_name: minio-provision
+    depends_on:
+      minio:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      MINIO_URL: http://minio:9000
+    entrypoint: ["/bin/sh", "/provision.sh"]
+    volumes:
+      - ./provision.sh:/provision.sh:ro
+    networks:
+      - cinema_net
+    restart: "no"
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+          cpus: '0.2'
+
 volumes:
   minio_data:
 
