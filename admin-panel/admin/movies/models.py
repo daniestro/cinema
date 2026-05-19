@@ -64,6 +64,11 @@ class Person(UUIDMixin, DatesMixin):
         return self.full_name
 
 
+def poster_upload_path(instance, filename):
+    ext = filename.rsplit('.', 1)[-1].lower()
+    return f'{instance.id}.{ext}'
+
+
 class Filmwork(UUIDMixin, DatesMixin):
 
     class TypeOfContent(models.TextChoices):
@@ -81,6 +86,7 @@ class Filmwork(UUIDMixin, DatesMixin):
                             choices=TypeOfContent.choices,
                             default=TypeOfContent.MOVIE)
     file_path = models.TextField(_('file path'), null=True, blank=True)
+    poster = models.ImageField(_('poster'), upload_to=poster_upload_path, null=True, blank=True)
     genres = models.ManyToManyField(Genre, through='GenreFilmwork')
     persons = models.ManyToManyField(Person, through='PersonFilmwork')
 

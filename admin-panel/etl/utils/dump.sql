@@ -42,7 +42,8 @@ CREATE TABLE content.film_work (
     creation_date date,
     file_path text,
     rating double precision,
-    type character varying(255)
+    type character varying(255),
+    poster character varying(100)
 );
 
 
