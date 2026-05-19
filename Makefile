@@ -10,8 +10,8 @@ SHELL := /bin/bash
 
 .PHONY: help up down restart ps logs \
         bootstrap network volumes envs keys \
-        auth admin catalog gateway \
-        down-auth down-admin down-catalog down-gateway
+        auth admin catalog gateway minio \
+        down-auth down-admin down-catalog down-gateway down-minio
 
 help: ## show available targets
 	@awk 'BEGIN{FS=":.*##"; printf "\nTargets:\n"} /^[a-zA-Z_-]+:.*##/ {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -26,7 +26,7 @@ volumes: ## create the named volumes the gateway mounts for Django assets
 	@docker volume inspect movies_media_volume  >/dev/null 2>&1 || docker volume create movies_media_volume
 
 envs: ## copy .env.example -> .env in every stack (won't overwrite existing files)
-	@for d in auth admin-panel catalog; do \
+	@for d in auth admin-panel catalog minio; do \
 		if [ ! -f $$d/.env ] && [ -f $$d/.env.example ]; then \
 			cp $$d/.env.example $$d/.env && echo "created $$d/.env from .env.example"; \
 		fi; \
@@ -58,14 +58,18 @@ catalog: bootstrap admin ## start catalog API (depends on admin: needs etl_netwo
 gateway: bootstrap ## start the single nginx entrypoint on host:80
 	cd gateway && docker compose up -d
 
+minio: bootstrap ## start MinIO object storage (S3-compatible, console at :9001)
+	cd minio && docker compose up -d
+
 ## --- whole project ---
 
-up: auth admin catalog gateway ## bring up the entire cinema (default goal)
+up: auth admin catalog gateway minio ## bring up the entire cinema (default goal)
 	@echo ""
 	@echo "cinema is up. Public entrypoint: http://localhost/"
 	@echo "  /auth/api/openapi      — auth swagger"
 	@echo "  /admin/movies/         — Django admin"
 	@echo "  /content/api/openapi   — catalog swagger"
+	@echo "  http://localhost:9001  — MinIO console"
 	@echo ""
 	@echo "Next steps (optional):"
 	@echo "  make -C auth create-admin email=root@cinema.local password=changeme"
@@ -90,5 +94,7 @@ down-catalog:
 	-cd catalog && docker compose down
 down-gateway:
 	-cd gateway && docker compose down
+down-minio:
+	-cd minio && docker compose down
 
-down: down-gateway down-catalog down-admin down-auth ## stop everything (network and volumes preserved)
+down: down-gateway down-catalog down-admin down-auth down-minio ## stop everything (network and volumes preserved)
