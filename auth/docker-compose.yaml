@@ -31,7 +31,7 @@ services:
       auth-postgres:
         condition: service_healthy
       auth-redis:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test: curl --fail http://127.0.0.1/health || exit 1
       interval: 5s
@@ -57,6 +57,7 @@ services:
   auth-postgres:
     image: postgres:16-alpine
     container_name: auth-postgres
+    restart: always
     volumes:
       - auth_db_volume:/var/lib/postgresql/data
     environment:
@@ -81,6 +82,12 @@ services:
     volumes:
       - auth_redis_volume:/data
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
     deploy:
       resources:
         limits:
