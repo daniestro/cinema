@@ -41,7 +41,7 @@ docker compose up -d
 
 This starts four containers:
 
-- `postgres-etl` — Postgres 13, seeded from `etl/utils/dump.sql` on first boot; exposed on host port **5433** (remapped from container's `5432` to avoid clashing with `notifications/`'s Postgres).
+- `postgres-etl` — Postgres 13, schema applied by Django migrations on first admin boot, data loaded from `admin/seed_data.sql` by the `seed_data` management command; exposed on host port **5433** (remapped from container's `5432` to avoid clashing with `notifications/`'s Postgres).
 - `elastic` — Elasticsearch 8.11.0, exposed on `${ES_PORT}`.
 - `movies-admin` — Django admin app, exposed only on the internal Docker network on port `8000`.
 - `etl` — the ETL worker, no exposed ports.
@@ -99,7 +99,7 @@ A Postman collection for smoke-testing the indexed data lives at `etl/utils/post
 
 - **Host port:** `5433` → container `5432`
 - **Container name:** `postgres-etl`
-- Seeded once from `etl/utils/dump.sql` on the first container start. Subsequent boots reuse the volume at `~/postgresql/data` on the host.
+- Schema is created by Django migrations on first admin boot (`movies.0001_initial` runs `CREATE SCHEMA content` and then `CreateModel` for every table). Data is loaded by the `seed_data` management command from `admin/seed_data.sql` — idempotent: skipped if `content.film_work` already has rows. Subsequent boots reuse the volume at `~/postgresql/data` on the host.
 
 ## Project structure
 
@@ -107,8 +107,11 @@ A Postman collection for smoke-testing the indexed data lives at `etl/utils/post
 admin-panel/
 ├── admin/                 ← Django project
 │   ├── manage.py
+│   ├── entrypoint.sh      ← migrate → seed_data → collectstatic → gunicorn
+│   ├── seed_data.sql      ← initial Postgres data (INSERT-only, ~13k rows)
 │   ├── config/            ← settings package (split into config/components/*)
 │   ├── movies/            ← Django app: models, admin, migrations, locale
+│   │   └── management/commands/seed_data.py  ← idempotent loader for seed_data.sql
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── etl/                   ← ETL worker
@@ -120,7 +123,6 @@ admin-panel/
 │   ├── processes.py       ← orchestration of pipeline tasks
 │   ├── state/             ← per-stream checkpoint files (state_*.json)
 │   ├── utils/
-│   │   ├── dump.sql       ← initial Postgres seed
 │   │   └── postman_tests.json
 │   └── Dockerfile
 ├── docker-compose.yml

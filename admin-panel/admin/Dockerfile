@@ -13,5 +13,8 @@ WORKDIR /app
 COPY ./manage.py /app/
 COPY ./config /app/config
 COPY ./movies /app/movies
+COPY ./seed_data.sql /app/seed_data.sql
+COPY ./entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-CMD sh -c "python manage.py migrate contenttypes --noinput && python manage.py migrate auth --noinput && python manage.py migrate admin --noinput && python manage.py migrate sessions --noinput && python manage.py migrate movies --fake --noinput && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 config.wsgi:application"
+CMD ["/app/entrypoint.sh"]
