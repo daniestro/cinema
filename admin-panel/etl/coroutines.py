@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Generator, Union, Optional
 
-from decorators import coroutine, backoff
+from decorators import coroutine
 from elastic import Elastic
 from logger import logger
 from movie_model import Movie, Person, Genre, GenreWithDesc
@@ -26,7 +26,6 @@ def fetch_changes(cursor, next_node: Generator, table_name: str, batch_size: int
 
 
 @coroutine
-@backoff()
 def fetch_data(cursor, sql_query: str, next_node: Generator) -> Generator[None, tuple[tuple, str], None]:
     """Корутина которая достает информацию из бд и
         отправляет в следующую корутину (кортеж с данными из БД, последняя дата изменения, )"""
@@ -40,7 +39,6 @@ def fetch_data(cursor, sql_query: str, next_node: Generator) -> Generator[None, 
 
 
 @coroutine
-@backoff()
 def transform_data(next_node: Generator, model: Union[GenreWithDesc, Person]) -> Generator[None, tuple[tuple, str], None]:
     """Корутина которая трансформирует список из бд в модель и
     отправляет в следующую корутину (список с моделями, последняя дата изменения, )"""
@@ -54,7 +52,6 @@ def transform_data(next_node: Generator, model: Union[GenreWithDesc, Person]) ->
 
 
 @coroutine
-@backoff()
 def save_data(state: State, state_key: str, elastic: Elastic, index: str, next_node: Optional[Generator] = None) \
         -> Generator[None, tuple[list[Union[Genre, Person, Movie]], str], None]:
     """Корутина которая сохраняет информацию о моделях,
@@ -72,7 +69,6 @@ def save_data(state: State, state_key: str, elastic: Elastic, index: str, next_n
 
 
 @coroutine
-@backoff()
 def fetch_movies_ids(cursor, next_node: Generator, table_name: str) \
         -> Generator[None, tuple[tuple, str], None]:
     """Корутина которая ищет id фильмов связанных с измененными person или genre и
@@ -97,7 +93,6 @@ def fetch_movies_ids(cursor, next_node: Generator, table_name: str) \
 
 
 @coroutine
-@backoff()
 def transform_movies(next_node: Generator) -> Generator[None, tuple[tuple, str], None]:
     """Корутина которая трансформирует информацию о фильмах и
     отправляет в следующую корутину (список с трансформированными фильмами, последняя дата изменения, )"""
