@@ -1,9 +1,12 @@
 asgiref==3.6.0
+boto3==1.43.10
 Django==3.2
 django-postgres-extra==2.0.8
 django-split-settings==1.2.0
+django-storages==1.14.6
 flake8==4.0.0
 mccabe==0.6.1
+Pillow==12.2.0
 psycopg2-binary>=2.9.5,<3
 pycodestyle==2.8.0
 pyflakes==2.4.0

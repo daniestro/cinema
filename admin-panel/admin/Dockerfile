@@ -1,7 +1,7 @@
 FROM python:3.10-alpine
 
-RUN apk add --no-cache postgresql-libs gettext \
-    && apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev libffi-dev \
+RUN apk add --no-cache postgresql-libs gettext jpeg zlib \
+    && apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev libffi-dev jpeg-dev zlib-dev \
     && pip install --upgrade pip
 
 COPY ./requirements.txt .
