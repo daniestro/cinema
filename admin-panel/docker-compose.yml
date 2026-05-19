@@ -14,9 +14,9 @@ services:
       - "8000"
     depends_on:
       elasticsearch:
-        condition: service_started
+        condition: service_healthy
       postgres:
-        condition: service_started
+        condition: service_healthy
     networks:
       - movies_network
     deploy:
@@ -39,7 +39,7 @@ services:
       - movies_media_volume:/opt/admin/media
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
     expose:
       - "8000"
     networks:
@@ -63,6 +63,13 @@ services:
       - "ES_JAVA_OPTS=-Xms256m -Xmx384m"
     ports:
       - ${ES_PORT}:${ES_PORT}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=2s >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: always
     networks:
       - movies_network
     deploy:
@@ -83,6 +90,12 @@ services:
         - POSTGRES_DB=${DB_NAME}
       ports:
         - "5433:5432"
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+        interval: 5s
+        timeout: 3s
+        retries: 10
+        start_period: 10s
       networks:
         - movies_network
       deploy:

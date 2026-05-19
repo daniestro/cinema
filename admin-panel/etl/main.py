@@ -16,9 +16,6 @@ from state.state_storage import JsonFileStorage, State
 def etl_pipline():
     """Функция, которая запускает pipline ETL"""
 
-    # Время для того, чтобы прогрузились остальные сервисы
-    sleep(20)
-
     # Для каждого пайплайна создается свой обработчик State
     state_movies = State(JsonFileStorage(logger=logger, file_path='state_movies.json'))
     state_persons = State(JsonFileStorage(logger=logger, file_path='state_persons.json'))
