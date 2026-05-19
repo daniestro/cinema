@@ -3,7 +3,7 @@ import os
 
 DATABASES = {
     'default': {
-            'ENGINE': 'django.db.backends.postgresql',
+            'ENGINE': 'config.db_backends.postgresql_retry',
             'NAME': os.environ.get('DB_NAME'),
             'USER': os.environ.get('DB_USER'),
             'PASSWORD': os.environ.get('DB_PASSWORD'),
