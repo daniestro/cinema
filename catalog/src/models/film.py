@@ -10,6 +10,7 @@ from .person import Person
 class Film(OrjsonModel, UUIDMixin):
     title: str
     imdb_rating: confloat(ge=0.0, le=100.0) = 0.0
+    poster_url: Optional[str] = None
 
 
 class DetailFilm(Film):

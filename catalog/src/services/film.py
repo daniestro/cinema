@@ -62,7 +62,12 @@ class FilmService(AbstractDataStorage):
         result = []
         for film_data in doc['hits']['hits']:
             fp = film_data['_source']
-            result.append(Film(id=fp['id'], title=fp['title'], imdb_rating=fp['imdb_rating']))
+            result.append(Film(
+                id=fp['id'],
+                title=fp['title'],
+                imdb_rating=fp['imdb_rating'],
+                poster_url=fp.get('poster_url'),
+            ))
 
         return result
 

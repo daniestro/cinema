@@ -116,7 +116,8 @@ class PersonService(AbstractDataStorage):
                 Film(
                     id=detailed_film['uuid'],
                     title=detailed_film['title'],
-                    imdb_rating=detailed_film['imdb_rating']
+                    imdb_rating=detailed_film['imdb_rating'],
+                    poster_url=detailed_film.get('poster_url'),
                 )
             )
 
