@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Request, Response
 
 from auth_app.api.pagination import Pagination
 from auth_app.api.role_check import get_current_user
+from auth_app.core.config import settings
 from auth_app.models.domain.user import User
 from auth_app.models.dto import LoginRecordSchema, UserSignInSchema, UserSignUpSchema
 from auth_app.models.dto.user import UserInfoSchema
@@ -51,8 +52,12 @@ async def sign_in(
         ip=ip,
     )
 
-    response.set_cookie("access_token", tokens.access, httponly=True, secure=True)
-    response.set_cookie("refresh_token", tokens.refresh, httponly=True, secure=True)
+    response.set_cookie(
+        "access_token", tokens.access, httponly=True, secure=settings.is_production, samesite="lax",
+    )
+    response.set_cookie(
+        "refresh_token", tokens.refresh, httponly=True, secure=settings.is_production, samesite="lax",
+    )
 
     return response
 
@@ -92,8 +97,12 @@ async def refresh(
     refresh_token = request.cookies.get("refresh_token")
     tokens = await auth_service.refresh(refresh_token)
 
-    response.set_cookie("access_token", tokens.access, httponly=True, secure=True)
-    response.set_cookie("refresh_token", tokens.refresh, httponly=True, secure=True)
+    response.set_cookie(
+        "access_token", tokens.access, httponly=True, secure=settings.is_production, samesite="lax",
+    )
+    response.set_cookie(
+        "refresh_token", tokens.refresh, httponly=True, secure=settings.is_production, samesite="lax",
+    )
 
     return response
 

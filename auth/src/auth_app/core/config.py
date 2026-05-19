@@ -87,6 +87,10 @@ class Settings(BaseSettings):
 
     debug: bool = Field(False)
 
+    @property
+    def is_production(self) -> bool:
+        return not self.debug
+
     model_config = SettingsConfigDict(env_prefix="auth_", env_file=".env")
 
 
