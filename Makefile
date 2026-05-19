@@ -10,8 +10,13 @@ SHELL := /bin/bash
 
 .PHONY: help up down restart ps logs \
         bootstrap network volumes envs keys \
-        auth admin catalog gateway minio \
+        auth admin catalog gateway minio admin-superuser \
         down-auth down-admin down-catalog down-gateway down-minio
+
+# Django admin superuser defaults — override via `make admin-superuser ADMIN_USER=foo ADMIN_PASS=bar`.
+ADMIN_USER  ?= admin
+ADMIN_PASS  ?= admin
+ADMIN_EMAIL ?= admin@cinema.local
 
 help: ## show available targets
 	@awk 'BEGIN{FS=":.*##"; printf "\nTargets:\n"} /^[a-zA-Z_-]+:.*##/ {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -61,6 +66,9 @@ gateway: bootstrap ## start the single nginx entrypoint on host:80
 minio: bootstrap ## start MinIO object storage (S3-compatible, console at :9001)
 	cd minio && docker compose up -d
 
+admin-superuser: ## create/reset Django superuser (defaults: admin/admin, override ADMIN_USER/ADMIN_PASS/ADMIN_EMAIL)
+	@docker exec movies-admin python manage.py shell -c "from django.contrib.auth import get_user_model; U = get_user_model(); user, created = U.objects.update_or_create(username='$(ADMIN_USER)', defaults={'email': '$(ADMIN_EMAIL)', 'is_staff': True, 'is_superuser': True}); user.set_password('$(ADMIN_PASS)'); user.save(); print('superuser $(ADMIN_USER)/$(ADMIN_PASS)', 'created' if created else 'reset')"
+
 ## --- whole project ---
 
 up: auth admin catalog gateway minio ## bring up the entire cinema (default goal)
@@ -72,6 +80,7 @@ up: auth admin catalog gateway minio ## bring up the entire cinema (default goal
 	@echo "  http://localhost:9001  — MinIO console"
 	@echo ""
 	@echo "Next steps (optional):"
+	@echo "  make admin-superuser                                              # Django admin: admin/admin"
 	@echo "  make -C auth create-admin email=root@cinema.local password=changeme"
 
 restart: down up ## tear down and bring back up
