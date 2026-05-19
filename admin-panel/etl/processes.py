@@ -10,6 +10,7 @@ SQL_QUERY_FOR_MOVIES = """
             fw.title, 
             fw.description, 
             fw.rating as imdb_rating,
+            fw.poster,
             COALESCE (
                json_agg(
                    DISTINCT jsonb_build_object(

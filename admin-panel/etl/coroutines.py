@@ -131,6 +131,9 @@ def transform_movies(next_node: Generator) -> Generator[None, tuple[tuple, str],
             del movie_dict['persons']
             del movie_dict['genres']
 
+            poster_key = movie_dict.pop('poster', None)
+            movie_dict['poster_url'] = f'/media/posters/{poster_key}' if poster_key else None
+
             movie = Movie(**movie_dict)
             movie.title = movie.title.upper()
             batch.append(movie)

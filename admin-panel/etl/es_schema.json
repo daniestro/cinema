@@ -125,6 +125,10 @@
                     "analyzer": "ru_en"
                   }
                 }
+              },
+              "poster_url": {
+                "type": "keyword",
+                "index": false
               }
             }
           }

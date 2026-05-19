@@ -45,6 +45,7 @@ class Movie(UUIDMixin):
     actors: list[Person] = []
     writers: list[Person] = []
     directors: list[Person] = []
+    poster_url: str | None = None
 
     @validator('description', pre=True)
     def none_to_str(cls, field):
