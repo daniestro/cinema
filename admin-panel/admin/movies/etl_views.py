@@ -24,10 +24,14 @@ def etl_dashboard(request):
     error = None
 
     try:
-        state = requests.get(f'{settings.ETL_BASE_URL}/state', timeout=READ_TIMEOUT).json()
+        response = requests.get(f'{settings.ETL_BASE_URL}/state', timeout=READ_TIMEOUT)
+        response.raise_for_status()
+        state = response.json()
     except requests.RequestException as exc:
         error = _combine(error, f'/state unreachable: {exc}')
 
+    # /health intentionally returns 503 with a JSON body describing the problem;
+    # we want to render that body, so do NOT call raise_for_status here.
     try:
         response = requests.get(f'{settings.ETL_BASE_URL}/health', timeout=READ_TIMEOUT)
         health = response.json()
@@ -52,7 +56,8 @@ def etl_dashboard(request):
 @require_POST
 def etl_trigger(request):
     try:
-        requests.post(f'{settings.ETL_BASE_URL}/trigger', timeout=READ_TIMEOUT)
+        response = requests.post(f'{settings.ETL_BASE_URL}/trigger', timeout=READ_TIMEOUT)
+        response.raise_for_status()
         messages.success(request, 'ETL tick triggered')
     except requests.RequestException as exc:
         messages.error(request, f'Failed to trigger ETL: {exc}')
@@ -64,6 +69,7 @@ def etl_trigger(request):
 def etl_reset(request):
     try:
         response = requests.post(f'{settings.ETL_BASE_URL}/reset-index', timeout=RESET_TIMEOUT)
+        response.raise_for_status()
         payload = response.json()
         deleted = ', '.join(payload.get('deleted_indexes') or []) or '—'
         removed = ', '.join(payload.get('removed_state_files') or []) or '—'
