@@ -64,11 +64,11 @@ services:
     ports:
       - ${ES_PORT}:${ES_PORT}
     healthcheck:
-      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=2s >/dev/null"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
+      test: ["CMD-SHELL", "curl -sf 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=30s' >/dev/null"]
+      interval: 2s
+      timeout: 35s
+      retries: 30
+      start_period: 5s
     restart: always
     networks:
       - movies_network
