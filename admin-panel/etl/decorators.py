@@ -1,7 +1,7 @@
 import time
 from functools import wraps
 
-import psycopg2
+import psycopg
 import requests
 
 from logger import logger
@@ -11,8 +11,8 @@ from logger import logger
 # Bugs (KeyError, TypeError, etc.) must surface immediately — retrying them
 # forever hides the failure in the log noise.
 CONNECTION_ERRORS = (
-    psycopg2.OperationalError,
-    psycopg2.InterfaceError,
+    psycopg.OperationalError,
+    psycopg.InterfaceError,
     requests.ConnectionError,
     requests.Timeout,
 )

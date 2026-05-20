@@ -11,14 +11,28 @@ class Elastic:
     """Класс для взаимодействия с ES"""
     def __init__(self, host: str, port: str, schema_path: str = 'es_schema.json'):
         self.__link = f'http://{host}:{port}'
+        self._schema_path = schema_path
+        self.ensure_indexes()
 
-        # Проверка на наличие индексов
-        for index_name, index_settings in self.get_indexes(schema_path).items():
+    def ensure_indexes(self) -> None:
+        """Создаёт индексы из schema, если они отсутствуют."""
+        for index_name, index_settings in self.get_indexes(self._schema_path).items():
             index_response = self.get_index(index_name)
             if not index_response.get(index_name):
                 requests.put(self.__link + '/' + index_name, json=index_settings,
                              headers={"Content-Type": "application/json; charset=utf-8"})
                 logger.info('Created index ' + index_name)
+
+    def delete_index(self, index: str) -> None:
+        """Удаляет индекс. 404 трактуется как успех (нечего удалять)."""
+        response = requests.delete(self.__link + '/' + index)
+        if response.status_code not in (200, 404):
+            response.raise_for_status()
+        logger.info(f'Deleted index {index} (status {response.status_code})')
+
+    def index_names(self) -> list[str]:
+        """Имена индексов, описанных в schema."""
+        return list(self.get_indexes(self._schema_path).keys())
 
     def get_index(self, index: str) -> dict:
         """Функция возвращает информацию об индексе"""
