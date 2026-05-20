@@ -56,7 +56,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
     container_name: elastic
     volumes:
-      - ~/elasticsearch/data:/usr/share/elasticsearch/data
+      - es_data:/usr/share/elasticsearch/data
     environment:
       - discovery.type=${DISCOVERY_TYPE}
       - xpack.security.enabled=${XPACK_SECURITY_ENABLED}
@@ -83,7 +83,7 @@ services:
       container_name: postgres-etl
       <<: *app
       volumes:
-        - ~/postgresql/data:/var/lib/postgresql/data
+        - postgres_etl_data:/var/lib/postgresql/data
       environment:
         - POSTGRES_PASSWORD=${DB_PASSWORD}
         - POSTGRES_USER=${DB_USER}
@@ -116,3 +116,7 @@ volumes:
     name: movies_static_volume
   movies_media_volume:
     name: movies_media_volume
+  es_data:
+    name: es_data
+  postgres_etl_data:
+    name: postgres_etl_data

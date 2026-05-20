@@ -99,7 +99,7 @@ A Postman collection for smoke-testing the indexed data lives at `etl/utils/post
 
 - **Host port:** `5433` → container `5432`
 - **Container name:** `postgres-etl`
-- Schema is created by Django migrations on first admin boot (`movies.0001_initial` runs `CREATE SCHEMA content` and then `CreateModel` for every table). Data is loaded by the `seed_data` management command from `admin/seed_data.sql` — idempotent: skipped if `content.film_work` already has rows. Subsequent boots reuse the volume at `~/postgresql/data` on the host.
+- Schema is created by Django migrations on first admin boot (`movies.0001_initial` runs `CREATE SCHEMA content` and then `CreateModel` for every table). Data is loaded by the `seed_data` management command from `admin/seed_data.sql` — idempotent: skipped if `content.film_work` already has rows. Subsequent boots reuse the `postgres_etl_data` named volume.
 
 ## Project structure
 
