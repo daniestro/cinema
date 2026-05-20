@@ -24,6 +24,7 @@ class FilmWorkAdmin(admin.ModelAdmin):
     inlines = (GenreFilmWorkInline, PersonFilmWorkInline)
     list_display = ('poster_thumb', 'title', 'type', 'creation_date',
                     'rating', 'created_at', 'updated_at', 'get_genres')
+    list_display_links = ('title',)
     list_filter = ('type',)
     search_fields = ('title', 'description', 'id')
 
