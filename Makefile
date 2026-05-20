@@ -11,7 +11,8 @@ SHELL := /bin/bash
 .PHONY: help up down restart ps logs \
         bootstrap network volumes envs keys \
         auth admin catalog gateway minio admin-superuser \
-        down-auth down-admin down-catalog down-gateway down-minio
+        down-auth down-admin down-catalog down-gateway down-minio \
+        drop-volume drop-volumes
 
 # Django admin superuser defaults — override via `make admin-superuser ADMIN_USER=foo ADMIN_PASS=bar`.
 ADMIN_USER  ?= admin
@@ -107,3 +108,15 @@ down-minio:
 	-cd minio && docker compose down
 
 down: down-gateway down-catalog down-admin down-auth down-minio ## stop everything (network and volumes preserved)
+
+## --- volume cleanup (destructive) ---
+
+# Named volumes owned by this stack.
+PROJECT_VOLUMES := auth_auth_db_volume auth_auth_redis_volume movies_static_volume movies_media_volume es_data postgres_etl_data cinema-minio_minio_data
+
+drop-volume: ## drop a single docker volume by name (usage: make drop-volume name=movies_media_volume)
+	@if [ -z "$(name)" ]; then echo "usage: make drop-volume name=<volume>"; exit 2; fi
+	@docker volume rm -f $(name)
+
+drop-volumes: down ## drop ALL named volumes owned by this stack (auth db/redis, Django static/media, ES, postgres-etl, MinIO)
+	@docker volume rm -f $(PROJECT_VOLUMES)
