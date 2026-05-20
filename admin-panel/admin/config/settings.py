@@ -13,4 +13,5 @@ include(
     'components/templates.py',
     'components/auth_password_validators.py',
     'components/storage.py',
+    'components/etl.py',
 )
