@@ -78,7 +78,7 @@ export function NumberedRail({ rail }: { rail: Rail }) {
           aria-label="Previous"
           onClick={() => setStart((s) => Math.max(0, s - 1))}
           disabled={!hasPrev}
-          className={`absolute -left-12 top-1/2 z-10 -translate-y-1/2 p-2 text-fg-muted transition hover:text-accent ${
+          className={`absolute -left-16 top-1/2 z-10 -translate-y-1/2 p-2 text-fg-muted transition hover:text-accent ${
             hasPrev ? 'opacity-100' : 'pointer-events-none opacity-0'
           }`}
         >
@@ -137,7 +137,7 @@ export function NumberedRail({ rail }: { rail: Rail }) {
           aria-label="Next"
           onClick={() => setStart((s) => Math.min(maxStart, s + 1))}
           disabled={!hasNext}
-          className={`absolute -right-12 top-1/2 z-10 -translate-y-1/2 p-2 text-fg-muted transition hover:text-accent ${
+          className={`absolute -right-16 top-1/2 z-10 -translate-y-1/2 p-2 text-fg-muted transition hover:text-accent ${
             hasNext ? 'opacity-100' : 'pointer-events-none opacity-0'
           }`}
         >
