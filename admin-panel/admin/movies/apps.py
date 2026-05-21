@@ -6,12 +6,12 @@ class MoviesConfig(AppConfig):
     name = 'movies'
 
     def ready(self):
-        _inject_etl_dashboard_entry()
+        _inject_custom_admin_entries()
 
 
 # The admin index renders apps from admin.site.get_app_list(); Django has no public
-# hook for non-model links, so we wrap the method to append a synthetic entry under Movies.
-def _inject_etl_dashboard_entry():
+# hook for non-model links, so we wrap the method to append synthetic entries under Movies.
+def _inject_custom_admin_entries():
     from django.contrib import admin
     from django.urls import reverse
 
@@ -25,6 +25,13 @@ def _inject_etl_dashboard_entry():
                     'name': 'ETL Dashboard',
                     'object_name': 'ETLDashboard',
                     'admin_url': reverse('etl_dashboard'),
+                    'view_only': True,
+                    'add_url': None,
+                })
+                app['models'].append({
+                    'name': 'Featured Block',
+                    'object_name': 'FeaturedBlock',
+                    'admin_url': reverse('featured_dashboard'),
                     'view_only': True,
                     'add_url': None,
                 })

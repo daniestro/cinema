@@ -1,0 +1,45 @@
+{% extends "admin/base_site.html" %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo; Featured Block
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Featured Block</h1>
+
+<p>Hero block shown on the public homepage. Stored as <code>featured.json</code> in the posters bucket.</p>
+
+{% if public_url %}
+<p><strong>Current JSON:</strong> <a href="{{ public_url }}" target="_blank">{{ public_url }}</a></p>
+{% else %}
+<p><em>No featured.json yet — fill the form below to create it.</em></p>
+{% endif %}
+
+<form method="post" action="{% url 'featured_save' %}">
+    {% csrf_token %}
+
+    <h2>Title</h2>
+    <input type="text" name="title" value="{{ title }}" maxlength="255" style="width:480px;" required />
+
+    <h2>Films</h2>
+    {% for slot in slots %}
+    <p>
+        <label>Slot {{ forloop.counter }}:
+            <select name="film_{{ slot.index }}" required>
+                <option value="">—</option>
+                {% for film in films %}
+                <option value="{{ film.id }}" {% if slot.selected_id == film.id %}selected{% endif %}>
+                    {{ film.title }}
+                </option>
+                {% endfor %}
+            </select>
+        </label>
+    </p>
+    {% endfor %}
+
+    <p><button type="submit">Save</button></p>
+</form>
+{% endblock %}
