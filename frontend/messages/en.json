@@ -7,6 +7,25 @@
     "films": "Films",
     "login": "Log in"
   },
+  "info": {
+    "heading": "Make it yours",
+    "subheading": "Sign in to save films, rate what you've watched, and share with friends.",
+    "cards": {
+      "save": {
+        "title": "Save",
+        "body": "Bookmark anything that catches your eye and find it later in one place."
+      },
+      "rate": {
+        "title": "Rate",
+        "body": "Score films you've watched and shape your personal picks."
+      },
+      "share": {
+        "title": "Share",
+        "body": "Send a film link to a friend without bouncing between apps."
+      }
+    },
+    "cta": "Log in"
+  },
   "footer": {
     "copyright": "© 2026 Pet Cinema"
   }
