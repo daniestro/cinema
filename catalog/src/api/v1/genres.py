@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Optional, Annotated
+from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
@@ -8,7 +8,6 @@ from services.common import BaseService
 from models.genre import Genre
 from models.validators import UUID
 from core.exceptions import ErrorMessagesUtil
-from services.auth import security_jwt
 from limiter import limiter
 
 
@@ -24,7 +23,6 @@ router = APIRouter()
 @limiter.limit("20/minute")
 async def all_genres(
         request: Request,
-        user: Annotated[dict, Depends(security_jwt)],
         genre_service: BaseService = Depends(get_genre_service)
 ) -> Optional[list[Genre]]:
     genres = await genre_service.get_list()

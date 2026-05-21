@@ -24,7 +24,6 @@ router = APIRouter()
 @limiter.limit("20/minute")
 async def all_films(
         request: Request,
-        user: Annotated[dict, Depends(security_jwt)],
         filters: GenreFilter = Depends(),
         paginator: Paginator = Depends(),
         film_service: BaseService = Depends(get_film_service)
@@ -55,7 +54,6 @@ async def all_films(
 async def film_details(
         film_id: UUID,
         request: Request,
-        user: Annotated[dict, Depends(security_jwt)],
         film_service: BaseService = Depends(get_film_service)
 ) -> DetailFilm:
     film = await film_service.get_by_id(film_id)
