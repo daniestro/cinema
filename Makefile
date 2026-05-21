@@ -10,8 +10,8 @@ SHELL := /bin/bash
 
 .PHONY: help up down restart ps logs \
         bootstrap network volumes envs keys \
-        auth admin catalog gateway minio admin-superuser \
-        down-auth down-admin down-catalog down-gateway down-minio \
+        auth admin catalog gateway minio frontend admin-superuser \
+        down-auth down-admin down-catalog down-gateway down-minio down-frontend \
         drop-volume drop-volumes
 
 # Django admin superuser defaults — override via `make admin-superuser ADMIN_USER=foo ADMIN_PASS=bar`.
@@ -43,7 +43,7 @@ volumes:
 
 ## copy .env.example -> .env in every stack (won't overwrite existing files)
 envs:
-	@for d in auth admin-panel catalog minio; do \
+	@for d in auth admin-panel catalog minio frontend; do \
 		if [ ! -f $$d/.env ] && [ -f $$d/.env.example ]; then \
 			cp $$d/.env.example $$d/.env && echo "created $$d/.env from .env.example"; \
 		fi; \
@@ -85,6 +85,10 @@ gateway: bootstrap
 minio: bootstrap
 	cd minio && docker compose up -d
 
+## start Next.js frontend (serves http://localhost/ via the gateway)
+frontend: bootstrap
+	cd frontend && docker compose up -d
+
 ## create/reset Django superuser (defaults: admin/admin, override ADMIN_USER/ADMIN_PASS/ADMIN_EMAIL)
 admin-superuser:
 	@docker exec movies-admin python manage.py shell -c "from django.contrib.auth import get_user_model; U = get_user_model(); user, created = U.objects.update_or_create(username='$(ADMIN_USER)', defaults={'email': '$(ADMIN_EMAIL)', 'is_staff': True, 'is_superuser': True}); user.set_password('$(ADMIN_PASS)'); user.save(); print('superuser $(ADMIN_USER)/$(ADMIN_PASS)', 'created' if created else 'reset')"
@@ -92,7 +96,7 @@ admin-superuser:
 # === whole project ===
 
 ## bring up the entire cinema (default goal)
-up: auth admin catalog gateway minio
+up: auth admin catalog gateway minio frontend
 	@echo ""
 	@echo "cinema is up. Public entrypoint: http://localhost/"
 	@echo "  /auth/api/openapi      — auth swagger"
@@ -129,9 +133,11 @@ down-gateway:
 	-cd gateway && docker compose down
 down-minio:
 	-cd minio && docker compose down
+down-frontend:
+	-cd frontend && docker compose down
 
 ## stop everything (network and volumes preserved)
-down: down-gateway down-catalog down-admin down-auth down-minio
+down: down-gateway down-frontend down-catalog down-admin down-auth down-minio
 
 # === volume cleanup (destructive) ===
 
