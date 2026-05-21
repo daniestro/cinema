@@ -25,6 +25,10 @@
     <input type="text" name="title" value="{{ title }}" maxlength="255" style="width:480px;" required />
 
     <h2>Films</h2>
+    <p style="color:#666;font-size:0.9em;">
+        Focus X/Y задают точку поверх постера, вокруг которой кадрируется hero (в процентах, 0–100).
+        Оставь поля пустыми — будет дефолт {{ default_focus.0 }} / {{ default_focus.1 }}.
+    </p>
     {% for slot in slots %}
     <p>
         <label>Slot {{ forloop.counter }}:
@@ -36,6 +40,15 @@
                 </option>
                 {% endfor %}
             </select>
+        </label>
+        &nbsp;
+        <label>Focus X:
+            <input type="number" name="focus_x_{{ slot.index }}" value="{{ slot.focus_x }}"
+                   min="0" max="100" step="1" placeholder="{{ default_focus.0 }}" style="width:64px;" />
+        </label>
+        <label>Focus Y:
+            <input type="number" name="focus_y_{{ slot.index }}" value="{{ slot.focus_y }}"
+                   min="0" max="100" step="1" placeholder="{{ default_focus.1 }}" style="width:64px;" />
         </label>
     </p>
     {% endfor %}
