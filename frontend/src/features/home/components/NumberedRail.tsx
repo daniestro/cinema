@@ -10,20 +10,24 @@ const MIN_CARD_WIDTH = 160;
 const MAX_CARD_WIDTH = 240;
 const FALLBACK_CARD_WIDTH = 224;
 
-function Chevron({ direction }: { direction: 'left' | 'right' }) {
+function Chevron({ direction, height }: { direction: 'left' | 'right'; height: number }) {
   return (
     <svg
       viewBox="0 0 12 32"
+      preserveAspectRatio="none"
       stroke="currentColor"
       strokeWidth="2"
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className="h-16 w-6"
-      style={direction === 'left' ? { transform: 'scaleX(-1)' } : undefined}
+      className="w-6"
+      style={{
+        height: `${height}px`,
+        transform: direction === 'left' ? 'scaleX(-1)' : undefined,
+      }}
       aria-hidden
     >
-      <polyline points="3,4 9,16 3,28" />
+      <polyline points="3,4 9,16 3,28" vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }
@@ -48,6 +52,7 @@ export function NumberedRail({ rail }: { rail: Rail }) {
   }, []);
 
   const step = cardWidth + GAP;
+  const cardHeight = cardWidth * 1.5;
 
   if (!rail.cards.length) {
     return (
@@ -78,11 +83,12 @@ export function NumberedRail({ rail }: { rail: Rail }) {
           aria-label="Previous"
           onClick={() => setStart((s) => Math.max(0, s - 1))}
           disabled={!hasPrev}
-          className={`absolute -left-16 top-1/2 z-10 -translate-y-1/2 p-2 text-fg-muted transition hover:text-accent ${
+          style={{ height: `${cardHeight}px` }}
+          className={`absolute -left-16 top-0 z-10 flex items-center px-2 text-fg-muted transition hover:text-accent ${
             hasPrev ? 'opacity-100' : 'pointer-events-none opacity-0'
           }`}
         >
-          <Chevron direction="left" />
+          <Chevron direction="left" height={cardHeight} />
         </button>
 
         <div ref={clipRef} className="overflow-hidden">
@@ -137,11 +143,12 @@ export function NumberedRail({ rail }: { rail: Rail }) {
           aria-label="Next"
           onClick={() => setStart((s) => Math.min(maxStart, s + 1))}
           disabled={!hasNext}
-          className={`absolute -right-16 top-1/2 z-10 -translate-y-1/2 p-2 text-fg-muted transition hover:text-accent ${
+          style={{ height: `${cardHeight}px` }}
+          className={`absolute -right-16 top-0 z-10 flex items-center px-2 text-fg-muted transition hover:text-accent ${
             hasNext ? 'opacity-100' : 'pointer-events-none opacity-0'
           }`}
         >
-          <Chevron direction="right" />
+          <Chevron direction="right" height={cardHeight} />
         </button>
       </div>
     </section>

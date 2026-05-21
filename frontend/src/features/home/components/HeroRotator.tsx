@@ -53,7 +53,7 @@ export function HeroRotator({ slides }: { slides: HeroSlide[] }) {
         className="absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-bg-base/90 to-transparent"
       />
 
-      <div className="relative z-10 mx-auto flex h-full max-w-screen-xl flex-col justify-end px-6 pb-16">
+      <div className="relative z-10 mx-auto flex h-full max-w-screen-xl flex-col justify-end px-10 pb-16">
         <p className="text-sm font-semibold uppercase tracking-widest text-accent">
           Featured
         </p>

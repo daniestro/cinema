@@ -4,7 +4,7 @@ import { NumberedRail } from '@/features/home/components/NumberedRail';
 export async function HomeRails() {
   const rails = await getRails();
   return (
-    <div className="space-y-section py-section">
+    <div className="space-y-section pb-section">
       {rails.map((rail) => (
         <NumberedRail key={rail.genre} rail={rail} />
       ))}
