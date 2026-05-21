@@ -1,0 +1,30 @@
+services:
+  frontend:
+    build:
+      context: .
+      target: dev
+    container_name: frontend-app
+    env_file:
+      - .env
+    expose:
+      - "3000"
+    volumes:
+      - ./src:/app/src
+      - ./messages:/app/messages
+      - ./public:/app/public
+      - ./next.config.ts:/app/next.config.ts
+      - ./tailwind.config.ts:/app/tailwind.config.ts
+      - ./postcss.config.mjs:/app/postcss.config.mjs
+      - ./tsconfig.json:/app/tsconfig.json
+    networks:
+      - cinema_net
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+          cpus: '1.0'
+
+networks:
+  cinema_net:
+    external: true

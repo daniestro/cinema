@@ -1,0 +1,13 @@
+{
+  "site": {
+    "name": "Pet Cinema",
+    "tagline": "A solo film catalog. Watch, rate, share."
+  },
+  "nav": {
+    "films": "Films",
+    "login": "Log in"
+  },
+  "footer": {
+    "copyright": "© 2026 Pet Cinema"
+  }
+}
