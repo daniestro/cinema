@@ -46,6 +46,7 @@ services:
     entrypoint: ["/bin/sh", "/provision.sh"]
     volumes:
       - ./provision.sh:/provision.sh:ro
+      - ./assets:/assets:ro
     networks:
       - cinema_net
     restart: "no"

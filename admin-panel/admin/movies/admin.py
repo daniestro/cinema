@@ -1,6 +1,10 @@
 from django.contrib import admin
+from django.core.files.storage import default_storage
 from django.utils.html import format_html
 from .models import Genre, Filmwork, GenreFilmwork, Person, PersonFilmwork
+
+
+DEFAULT_POSTER_KEY = '_default.svg'
 
 
 @admin.register(Genre)
@@ -29,9 +33,8 @@ class FilmWorkAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'id')
 
     def poster_thumb(self, obj):
-        if obj.poster:
-            return format_html('<img src="{}" style="height:40px;" />', obj.poster.url)
-        return '—'
+        url = obj.poster.url if obj.poster else default_storage.url(DEFAULT_POSTER_KEY)
+        return format_html('<img src="{}" style="height:40px;" />', url)
     poster_thumb.short_description = 'Poster'
 
     def get_genres(self, obj):

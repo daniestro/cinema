@@ -13,6 +13,15 @@ mc mb --ignore-existing "$ALIAS/$BUCKET"
 
 mc anonymous set download "$ALIAS/$BUCKET"
 
+# Upload (or refresh) bundled assets. `mc cp` overwrites by default, so editing
+# minio/assets/* locally and re-running provision is the supported update path.
+if [ -d /assets ]; then
+    for asset in /assets/*; do
+        [ -f "$asset" ] || continue
+        mc cp "$asset" "$ALIAS/$BUCKET/$(basename "$asset")"
+    done
+fi
+
 POLICY_FILE=/tmp/admin-panel-policy.json
 cat > "$POLICY_FILE" <<EOF
 {
