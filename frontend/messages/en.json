@@ -29,5 +29,26 @@
   },
   "footer": {
     "copyright": "© 2026 Pet Cinema"
+  },
+  "auth": {
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "At least 8 characters",
+    "submitting": "Please wait…",
+    "login": {
+      "heading": "Welcome back",
+      "subheading": "Sign in to access your watchlist.",
+      "submit": "Log in",
+      "noAccountPrefix": "Don't have an account?",
+      "noAccountLink": "Create one"
+    },
+    "register": {
+      "heading": "Create your account",
+      "subheading": "Save films, rate them, share picks — all in one place.",
+      "submit": "Create account",
+      "hasAccountPrefix": "Already have an account?",
+      "hasAccountLink": "Log in"
+    }
   }
 }
