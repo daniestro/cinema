@@ -28,7 +28,10 @@
     "ctaSecondary": "Log in"
   },
   "footer": {
-    "copyright": "© 2026 Pet Cinema"
+    "copyright": "© 2026 Pet Cinema",
+    "browseHeading": "Browse",
+    "accountHeading": "Account",
+    "register": "Create account"
   },
   "auth": {
     "emailLabel": "Email",
