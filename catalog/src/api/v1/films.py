@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from typing import Optional, Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 
 from services.film import get_film_service
 from services.common import BaseService
@@ -24,6 +24,7 @@ router = APIRouter()
 @limiter.limit("20/minute")
 async def all_films(
         request: Request,
+        response: Response,
         filters: GenreFilter = Depends(),
         paginator: Paginator = Depends(),
         film_service: BaseService = Depends(get_film_service)
@@ -37,11 +38,14 @@ async def all_films(
     - **page_number**: кол-во элементов на странице
     """
 
-    films = await film_service.get_list(filters.genre, None, filters.sort,
-                                         paginator.page_number, paginator.page_size)
-    if not films:
+    page = await film_service.get_list(filters.genre, None, filters.sort,
+                                        paginator.page_number, paginator.page_size)
+    if not page:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=ErrorMessagesUtil.films_not_found())
-    return films
+    items = page['items'] if isinstance(page, dict) else page.items
+    total = page['total'] if isinstance(page, dict) else page.total
+    response.headers["X-Total-Count"] = str(total)
+    return items
 
 
 @router.get(
@@ -71,6 +75,7 @@ async def film_details(
 @limiter.limit("20/minute")
 async def search_films(
         request: Request,
+        response: Response,
         user: Annotated[dict, Depends(security_jwt)],
         filters: QueryFilter = Depends(),
         paginator: Paginator = Depends(),
@@ -86,7 +91,11 @@ async def search_films(
     - **page_number**: кол-во элементов на странице
     """
 
-    films = await film_service.get_list(None, filters.query, filters.sort, paginator.page_number, paginator.page_size)
-    if not films:
+    page = await film_service.get_list(None, filters.query, filters.sort,
+                                        paginator.page_number, paginator.page_size)
+    if not page:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail=ErrorMessagesUtil.films_not_found())
-    return films
+    items = page['items'] if isinstance(page, dict) else page.items
+    total = page['total'] if isinstance(page, dict) else page.total
+    response.headers["X-Total-Count"] = str(total)
+    return items

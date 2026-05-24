@@ -22,7 +22,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 768M
+          memory: 1536M
           cpus: '1.0'
 
 networks:

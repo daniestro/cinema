@@ -5,7 +5,8 @@
   },
   "nav": {
     "films": "Films",
-    "login": "Log in"
+    "login": "Log in",
+    "register": "Sign up"
   },
   "info": {
     "heading": "Your personal film diary",
@@ -26,6 +27,18 @@
     "ctaPrimary": "Create your free account",
     "ctaSecondaryPrefix": "Already have an account?",
     "ctaSecondary": "Log in"
+  },
+  "films": {
+    "heading": "Films",
+    "searchPlaceholder": "Search films…",
+    "allGenres": "All genres",
+    "genreLabel": "Filter by genre",
+    "sortLabel": "Rating",
+    "empty": "Nothing matches your filters.",
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page",
+    "of": "of"
   },
   "footer": {
     "copyright": "© 2026 Pet Cinema",

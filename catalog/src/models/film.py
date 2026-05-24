@@ -19,3 +19,8 @@ class DetailFilm(Film):
     directors: conlist(Person, min_items=0)
     actors: conlist(Person, min_items=0)
     writers: conlist(Person, min_items=0)
+
+
+class FilmListPage(OrjsonModel):
+    items: list[Film]
+    total: int

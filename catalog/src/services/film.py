@@ -7,7 +7,7 @@ from redis.asyncio import Redis
 
 from db.elastic import get_elastic
 from db.redis import get_redis
-from models.film import Film, DetailFilm
+from models.film import Film, DetailFilm, FilmListPage
 from .common import RedisService, BaseService
 from .abstract import AbstractDataStorage
 
@@ -20,7 +20,7 @@ class FilmService(AbstractDataStorage):
             return None
         return DetailFilm(**doc['_source'])
 
-    async def get_list(self, genre_id, query, sort, page, page_size) -> Optional[list[Film]]:
+    async def get_list(self, genre_id, query, sort, page, page_size) -> Optional[FilmListPage]:
 
         match_query = {
             'match': {
@@ -59,17 +59,22 @@ class FilmService(AbstractDataStorage):
         except NotFoundError:
             return None
 
-        result = []
+        items = []
         for film_data in doc['hits']['hits']:
             fp = film_data['_source']
-            result.append(Film(
+            items.append(Film(
                 id=fp['id'],
                 title=fp['title'],
                 imdb_rating=fp['imdb_rating'],
                 poster_url=fp.get('poster_url'),
             ))
 
-        return result
+        total_raw = doc['hits'].get('total', 0)
+        total = total_raw['value'] if isinstance(total_raw, dict) else int(total_raw)
+
+        if not items:
+            return None
+        return FilmListPage(items=items, total=total)
 
 
 @lru_cache()
