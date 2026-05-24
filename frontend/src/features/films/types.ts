@@ -18,3 +18,16 @@ export type FilmsQuery = {
 };
 
 export const DEFAULT_PAGE_SIZE = 24;
+
+export type Person = {
+  uuid: string;
+  fullName: string;
+};
+
+export type FilmDetail = Film & {
+  description: string | null;
+  genres: Genre[];
+  directors: Person[];
+  actors: Person[];
+  writers: Person[];
+};

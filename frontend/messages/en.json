@@ -40,6 +40,16 @@
     "page": "Page",
     "of": "of"
   },
+  "filmDetail": {
+    "back": "Back to films",
+    "noDescription": "No description available.",
+    "directors": "Directors",
+    "cast": "Cast",
+    "writers": "Writers",
+    "noDirectors": "No directors listed.",
+    "noActors": "No cast listed.",
+    "noWriters": "No writers listed."
+  },
   "footer": {
     "copyright": "© 2026 Pet Cinema",
     "browseHeading": "Browse",
